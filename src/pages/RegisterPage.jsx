@@ -14,7 +14,6 @@ const RegisterPage = () => {
     setLoading(true);
 
     setTimeout(() => {
-      // Simulasi penyimpanan user baru
       console.log("User terdaftar:", { username, email, password });
       message.success('Registrasi berhasil! Silakan login.');
       navigate('/login');
