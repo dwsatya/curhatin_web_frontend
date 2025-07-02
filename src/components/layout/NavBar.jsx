@@ -23,7 +23,7 @@ const Navbar = () => {
         boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
       }}
     >
-      <div style={{ flex: "1 0 auto" }}>
+      <div style={{ flex: "1 0 auto", fontFamily: "Poppins, sans-serif" }}>
         <Link to="/" style={{ fontSize: "20px", fontWeight: "bold", color: "#ec407a" }}>
           Curhat.<span style={{ color: "#000" }}>in</span>
         </Link>

@@ -29,8 +29,8 @@ const Dashboard = () => {
     <h1 className="paragraph-container" style={{ fontSize: '25px', color: '#fff', paddingBottom: '10px'}}>
       Hai! Selamat datang di
     </h1>
-    <Title level={1} className="gradient-title" style={{ fontSize: '70px'}}>
-     Curhat.in
+    <Title level={1} className="gradient-title" style={{ fontSize: '70px', color: '#ec407a' }}>
+     Curhat.<span style={{ color: "#fff" }}>in</span>
     </Title>
     <Paragraph className="paragraph-container" style={{
       fontSize: '18px',
