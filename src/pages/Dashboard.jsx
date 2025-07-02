@@ -11,41 +11,36 @@ const { Title, Paragraph } = Typography;
 const Dashboard = () => {
   return (
     <div>
-<div style={{
-  backgroundImage: `url(${landingImage})`,
-  backgroundSize: 'cover',
-  backgroundPosition: 'center',
-  backgroundRepeat: 'no-repeat',
-  minHeight: '94vh',
-  display: 'flex',
-  flexDirection: 'column',
-  justifyContent: 'center',
-  alignItems: 'flex-end',
-  textAlign: 'left',
-  padding: '0 80px', 
-  boxSizing: 'border-box',
-}}>
-  <div style={{ maxWidth: 580 }}> 
-    <h1 className="paragraph-container" style={{ fontSize: '25px', color: '#fff', paddingBottom: '10px'}}>
-      Hai! Selamat datang di
-    </h1>
-    <Title level={1} className="gradient-title" style={{ fontSize: '70px', color: '#ec407a' }}>
-     Curhat.<span style={{ color: "#fff" }}>in</span>
-    </Title>
-    <Paragraph className="paragraph-container" style={{
-      fontSize: '18px',
-      color: '#fff',
-      lineHeight: 1.8,
-    }}>
-      Platform aman dan nyaman untuk berbagi cerita, mendapatkan dukungan, dan menemukan informasi kesehatan mental. Kami di sini untuk kamu tanpa penilaian, hanya ruang untuk didengar.
-    </Paragraph>
-  </div>
-</div>
-
-
-
-
-
+      <div style={{
+        backgroundImage: `url(${landingImage})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        minHeight: '94vh',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'flex-end',
+        textAlign: 'left',
+        padding: '0 80px', 
+        boxSizing: 'border-box',
+      }}>
+        <div style={{ maxWidth: 580 }}> 
+          <h1 className="paragraph-container" style={{ fontSize: '25px', color: '#fff', paddingBottom: '10px'}}>
+            Hai! Selamat datang di
+          </h1>
+          <Title level={1} className="gradient-title" style={{ fontSize: '70px', color: '#ec407a' }}>
+          Curhat.<span style={{ color: "#fff" }}>in</span>
+          </Title>
+          <Paragraph className="paragraph-container" style={{
+            fontSize: '18px',
+            color: '#fff',
+            lineHeight: 1.8,
+          }}>
+            Platform aman dan nyaman untuk berbagi cerita, mendapatkan dukungan, dan menemukan informasi kesehatan mental. Kami di sini untuk kamu tanpa penilaian, hanya ruang untuk didengar.
+          </Paragraph>
+        </div>
+      </div>
       {/* Bagian 2: Forum */}
       <div style={{ backgroundColor: '#ffffff', padding: '40px 20px' }}>
         <Row justify="center">

@@ -87,3 +87,15 @@ button:focus-visible {
 .ant-menu-item:hover::after {
   border-bottom: 2px solid #e91e63 !important;
 }
+
+.login-link {
+  color: #969696;
+  font-size: 16px;
+  font-weight: bold;
+  font-family: "Poppins", sans-serif;
+  text-decoration: none;
+}
+
+.login-hover:hover {
+  color: #e97199;
+}

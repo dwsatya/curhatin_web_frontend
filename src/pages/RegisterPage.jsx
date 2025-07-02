@@ -1,26 +1,23 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Form, Input, Button, Card, message, Typography } from 'antd';
+import { Form, Input, Button, Card, Typography, message } from 'antd';
 
 const { Title, Text } = Typography;
 
-const LoginPage = () => {
+const RegisterPage = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleLogin = (values) => {
-    const { username, password } = values;
+  const handleRegister = (values) => {
+    const { username, email, password } = values;
 
     setLoading(true);
 
     setTimeout(() => {
-      if (username === 'admin' && password === '1234') {
-        localStorage.setItem('token', 'dummy-token');
-        message.success('Login berhasil!');
-        navigate('/dashboard');
-      } else {
-        message.error('Username atau password salah');
-      }
+      // Simulasi penyimpanan user baru
+      console.log("User terdaftar:", { username, email, password });
+      message.success('Registrasi berhasil! Silakan login.');
+      navigate('/login');
       setLoading(false);
     }, 1000);
   };
@@ -38,23 +35,34 @@ const LoginPage = () => {
     >
       <Card
         style={{
-          width: 400,
+          width: 450,
           borderRadius: 10,
           boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
         }}
       >
         <div style={{ textAlign: 'center', marginBottom: 30 }}>
           <Title level={3} style={{ color: '#ec407a', marginBottom: 0, fontFamily: 'Poppins' }}>
-            Curhat<span style={{ color: '#000' }}>.in</span>
+            Daftar di Curhat<span style={{ color: '#000' }}>.in</span>
           </Title>
-          <Text type="secondary">Silakan login untuk melanjutkan</Text>
+          <Text type="secondary">Buat akun untuk mulai curhat dan terhubung</Text>
         </div>
 
-        <Form layout="vertical" onFinish={handleLogin}>
+        <Form layout="vertical" onFinish={handleRegister}>
           <Form.Item
             label="Username"
             name="username"
             rules={[{ required: true, message: 'Username wajib diisi' }]}
+          >
+            <Input size="large" />
+          </Form.Item>
+
+          <Form.Item
+            label="Email"
+            name="email"
+            rules={[
+              { required: true, message: 'Email wajib diisi' },
+              { type: 'email', message: 'Format email tidak valid' },
+            ]}
           >
             <Input size="large" />
           </Form.Item>
@@ -80,16 +88,16 @@ const LoginPage = () => {
                 fontWeight: 'bold',
               }}
             >
-              Masuk
+              Daftar
             </Button>
           </Form.Item>
         </Form>
 
         <div style={{ textAlign: 'center', marginTop: 10 }}>
           <Text>
-            Belum punya akun?{' '}
-            <a href="/register" style={{ color: '#ec407a' }}>
-              Daftar
+            Sudah punya akun?{' '}
+            <a href="/login" style={{ color: '#ec407a' }}>
+              Login di sini
             </a>
           </Text>
         </div>
@@ -98,4 +106,4 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export default RegisterPage;

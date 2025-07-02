@@ -1,6 +1,7 @@
 import React from "react";
-import { Layout, Menu } from "antd";
+import { Layout, Menu, Button } from "antd";
 import { Link, useLocation } from "react-router-dom";
+import '../../index.css';
 
 const { Header } = Layout;
 
@@ -24,7 +25,7 @@ const Navbar = () => {
       }}
     >
       <div style={{ flex: "1 0 auto", fontFamily: "Poppins, sans-serif" }}>
-        <Link to="/" style={{ fontSize: "20px", fontWeight: "bold", color: "#ec407a" }}>
+        <Link  style={{ fontSize: "20px", fontWeight: "bold", color: "#ec407a" }}>
           Curhat.<span style={{ color: "#000" }}>in</span>
         </Link>
       </div>
@@ -33,7 +34,7 @@ const Navbar = () => {
         theme="light"
         mode="horizontal"
         selectedKeys={[selectedKey]}
-        style={{ flex: "0 1 auto", background: "#fff", gap: "15px" }}
+        style={{ flex: "0 1 auto", background: "#fff", gap: "15px", paddingRight: "100px" }}
       >
         <Menu.Item key="/dashboard">
           <Link to="/dashboard">Home</Link>
@@ -51,6 +52,13 @@ const Navbar = () => {
           <Link to="/profile">Profile</Link>
         </Menu.Item>
       </Menu>
+
+      <Link
+      className="login-link"
+      to="/login"
+      >
+      Login
+      </Link>
     </Header>
   );
 };
