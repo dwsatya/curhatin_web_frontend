@@ -12,9 +12,6 @@ const MainLayout = ({ children }) => {
 
       <Content
         style={{
-          padding: "20px",
-          maxWidth: "1400px",
-          margin: "0 auto",
           width: "100%",
           background: "#fff",
         }}

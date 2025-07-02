@@ -1,4 +1,3 @@
-// src/components/layout/Navbar.jsx
 import React from "react";
 import { Layout, Menu } from "antd";
 import { Link, useLocation } from "react-router-dom";
@@ -8,11 +7,22 @@ const { Header } = Layout;
 const Navbar = () => {
   const location = useLocation();
 
-  // Highlight menu item yang sedang aktif
   const selectedKey = location.pathname === "/" ? "/dashboard" : location.pathname;
 
   return (
-    <Header style={{ display: "flex", alignItems: "center", background: "#ffd1dc", padding: "0 24px" }}>
+    <Header
+      style={{
+        position: "sticky",
+        top: 0,
+        zIndex: 1000,
+        width: "100%",
+        display: "flex",
+        alignItems: "center",
+        background: "#fff",
+        padding: "0 50px",
+        boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+      }}
+    >
       <div style={{ flex: "1 0 auto" }}>
         <Link to="/" style={{ fontSize: "20px", fontWeight: "bold", color: "#ec407a" }}>
           Curhat.<span style={{ color: "#000" }}>in</span>
@@ -23,7 +33,7 @@ const Navbar = () => {
         theme="light"
         mode="horizontal"
         selectedKeys={[selectedKey]}
-        style={{ flex: "0 1 auto", background: "#ffd1dc" }}
+        style={{ flex: "0 1 auto", background: "#fff", gap: "15px" }}
       >
         <Menu.Item key="/dashboard">
           <Link to="/dashboard">Home</Link>

@@ -1,0 +1,27 @@
+.gradient-title {
+  background: linear-gradient(90deg, #ec407a, #ec407a, #ec407a);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-family: 'Poppins', sans-serif;
+  font-size: 3.5rem;
+  font-weight: 800;
+  animation: fadeIn 1.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.paragraph-container {
+  max-width: 720px;
+  margin: 0 auto;
+  animation: fadeIn 1.5s ease-in-out;
+}
+

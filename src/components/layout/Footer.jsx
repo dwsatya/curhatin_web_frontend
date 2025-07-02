@@ -8,7 +8,7 @@ const Footer = () => {
   return (
     <AntFooter style={{ backgroundColor: '#fff', padding: '20px 0', borderTop: '1px solid #e8e8e8' }}>
       <div style={{ textAlign: 'center' }}>
-        <Space direction="vertical" size={4}>
+        <Space direction="horizontal" size={60}>
           <Text strong style={{ fontSize: 16, color: '#333' }}>Curhat.in</Text>
           <Text style={{ color: '#666', fontSize: 13 }}>
             Tempat berbagi cerita tanpa rasa takut dihakimi
