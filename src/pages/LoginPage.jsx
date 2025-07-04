@@ -1,28 +1,51 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Form, Input, Button, Card, message, Typography } from 'antd';
+import { Form, Input, Button, Card, message, Typography, notification } from 'antd';
+
+import { sendData } from "../utils/api";
+import { AuthContext } from "../providers/AuthProvider";
 
 const { Title, Text } = Typography;
 
 const LoginPage = () => {
   const [loading, setLoading] = useState(false);
+  const [api, contextHolder] = notification.useNotification();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const { login } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  const handleLogin = (values) => {
-    const { username, password } = values;
-
+  const handleLogin = async () => {
     setLoading(true);
 
-    setTimeout(() => {
-      if (username === 'admin' && password === '1234') {
-        localStorage.setItem('token', 'dummy-token');
-        message.success('Login berhasil!');
-        navigate('/dashboard');
+    const formData = new FormData();
+    formData.append("email", email);
+    formData.append("password", password);
+
+    try {
+      const resp = await sendData("/api/v1/auth/login", formData);
+      if (resp?.access_token) {
+        console.log("TOKEN:", resp.access_token);
+        localStorage.setItem("token", resp.access_token); 
+        login(resp.access_token);
+        message.success("Login berhasil!");
+        navigate("/dashboard");
       } else {
-        message.error('Username atau password salah');
+        failedLogin();
       }
+    } catch (error) {
+      console.log(error);
+      failedLogin();
+    } finally {
       setLoading(false);
-    }, 1000);
+    }
+  };
+
+  const failedLogin = () => {
+    api.error({
+      message: "Gagal login",
+      description: "Email atau password salah",
+    });
   };
 
   return (
@@ -36,6 +59,7 @@ const LoginPage = () => {
         padding: '20px',
       }}
     >
+      {contextHolder}
       <Card
         style={{
           width: 400,
@@ -52,11 +76,11 @@ const LoginPage = () => {
 
         <Form layout="vertical" onFinish={handleLogin}>
           <Form.Item
-            label="Username"
-            name="username"
-            rules={[{ required: true, message: 'Username wajib diisi' }]}
+            label="Email"
+            name="email"
+            rules={[{ required: true, message: 'Email wajib diisi' }]}
           >
-            <Input size="large" />
+            <Input size="large" value={email} onChange={(e) => setEmail(e.target.value)} />
           </Form.Item>
 
           <Form.Item
@@ -64,7 +88,7 @@ const LoginPage = () => {
             name="password"
             rules={[{ required: true, message: 'Password wajib diisi' }]}
           >
-            <Input.Password size="large" />
+            <Input.Password size="large" value={password} onChange={(e) => setPassword(e.target.value)} />
           </Form.Item>
 
           <Form.Item>

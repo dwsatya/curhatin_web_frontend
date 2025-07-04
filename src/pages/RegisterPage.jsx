@@ -8,18 +8,37 @@ const RegisterPage = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleRegister = (values) => {
-    const { username, email, password } = values;
+    const handleRegister = async (values) => {
+        const { username, email, password } = values;
+        setLoading(true);
 
-    setLoading(true);
+        const formData = new FormData();
+        formData.append("username", username);
+        formData.append("email", email);
+        formData.append("password", password);
 
-    setTimeout(() => {
-      console.log("User terdaftar:", { username, email, password });
-      message.success('Registrasi berhasil! Silakan login.');
-      navigate('/login');
-      setLoading(false);
-    }, 1000);
-  };
+        try {
+            const response = await fetch("http://127.0.0.1:5000/api/v1/auth/register", {
+            method: "POST",
+            body: formData,
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+            message.success("Registrasi berhasil! Silakan login.");
+            navigate("/login");
+            } else {
+            message.error(data.message || "Registrasi gagal");
+            }
+        } catch (err) {
+            console.error("Error saat register:", err);
+            message.error("Gagal terhubung ke server");
+        } finally {
+            setLoading(false);
+        }
+    };
+
 
   return (
     <div
