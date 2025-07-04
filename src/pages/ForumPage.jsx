@@ -11,6 +11,7 @@ const ForumPage = () => {
   const [comments, setComments] = useState([]);
   const [commentForm] = Form.useForm();
   const [form] = Form.useForm();
+  const [showForm, setShowForm] = useState(false);
 
   const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
   const token = localStorage.getItem("token");
@@ -100,39 +101,66 @@ fetch(`${apiUrl}/api/v1/thread`, {
   };
 
   return (
-    <div style={{ padding: 24, maxWidth: 900, margin: "0 auto" }}>
-      <Title level={2}>Forum Diskusi</Title>
+    <div style={{ padding: 24, maxWidth: 3000, margin: "0 auto" }}>
+        
+      <Title level={2}>Buat Forum Diskusi</Title>
 
-      {/* Form Buat Forum */}
-      <Card title="Buat Forum Baru" style={{ marginBottom: 24 }}>
-        <Form layout="vertical" onFinish={handleAddForum} form={form}>
-          <Form.Item label="Judul Forum" name="title" rules={[{ required: true, message: "Judul wajib diisi" }]}>
-            <Input />
-          </Form.Item>
-          <Form.Item label="Isi Forum" name="content" rules={[{ required: true, message: "Isi wajib diisi" }]}>
-            <TextArea rows={4} />
-          </Form.Item>
-          <Form.Item>
-            <Button type="primary" htmlType="submit" loading={loading}>
-              Tambah Forum
-            </Button>
-          </Form.Item>
-        </Form>
-      </Card>
+    {/* Form Buat Forum */}
+        <Card
+        style={{ marginBottom: 24 }}
+        >
+            <Button size="small" type="link" onClick={() => setShowForm(!showForm)}>
+                    {showForm ? "Tutup" : "Buat Forum Baru?"}
+                </Button>
+            {showForm && (
+                <Form layout="vertical" onFinish={handleAddForum} form={form}>
+                <Form.Item label="Judul Forum" name="title" rules={[{ required: true, message: "Judul wajib diisi" }]}>
+                    <Input />
+                </Form.Item>
+                <Form.Item label="Isi Forum" name="content" rules={[{ required: true, message: "Isi wajib diisi" }]}>
+                    <TextArea rows={4} />
+                </Form.Item>
+                <Form.Item>
+                    <Button type="primary" htmlType="submit" loading={loading}>
+                    Tambah Forum
+                    </Button>
+                </Form.Item>
+                </Form>
+                )}
+            </Card>
 
-      {/* Daftar Forum */}
-      <List
-        header={<b>Semua Forum</b>}
-        dataSource={forums}
-        renderItem={(item) => (
-          <List.Item key={item.id} style={{ cursor: "pointer" }} onClick={() => loadComments(item.id)}>
-            <List.Item.Meta
-              title={<strong>{item.title}</strong>}
-              description={<Paragraph ellipsis={{ rows: 2 }}>{item.content}</Paragraph>}
-            />
-          </List.Item>
-        )}
-      />
+    <Title level={2}>List Forum Diskusi</Title>
+    {/* Daftar Forum */}
+    <div
+    style={{
+        display: "grid",
+        gridTemplateColumns: "repeat(auto-fit, minmax(500px, 1fr))",
+        gap: 24,
+    }}
+    >
+    {forums.map((item) => (
+        <Card
+        key={item.id}
+        title={<Text strong>{item.title}</Text>}
+        onClick={() => loadComments(item.id)}
+        style={{
+            cursor: "pointer",
+            borderRadius: 12,
+            boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
+            transition: "transform 0.2s",
+        }}
+        hoverable
+        >
+        <Paragraph ellipsis={{ rows: 3 }}>{item.content}</Paragraph>
+        <div style={{ display: "flex", justifyContent: "space-between", marginTop: 12 }}>
+            <Text type="secondary">👤 {item.username || "Anonim"}</Text>
+            <Text type="secondary">{item.created_at}</Text>
+        </div>
+        </Card>
+    ))}
+    </div>
+
+
 
       {/* Komentar */}
       {selectedForum && (
