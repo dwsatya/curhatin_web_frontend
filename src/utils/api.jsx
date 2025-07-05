@@ -224,30 +224,24 @@ export const deleteDataPrivateJSON = async (url, data) => {
 
 export const logoutAPI = async () => {
   let token = await jwtStorage.retrieveToken();
-  let formData = new FormData();
-  formData.append("logout", "Logout"); // Assuming jwtStorage retrieves token
-  return fetch(REACT_APP_API_URL + "/api/auth/logout", {
+
+  const response = await fetch(REACT_APP_API_URL + "/api/v1/auth/logout", {
     method: "POST",
+    credentials: "include", 
     headers: {
+      "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
-    body: formData,
-  })
-    .then((response) => {
-      if (response.status === 200) {
-        jwtStorage.removeItem();
-        return { isLoggedOut: true };
-      } else {
-        // Handle errors (e.g., unexpected status code)
-        console.error("Logout failed:", response.statusText);
-        return false;
-      }
-    })
-    .catch((error) => {
-      console.error("Logout error:", error);
-      return false;
-    });
+  });
+
+  if (!response.ok) {
+    throw new Error("Logout failed");
+  }
+
+  return await response.json();
 };
+
+
 
 export const getImage = (url_image) => {
   const imgDefault = "/storage/images/userpng_1717846018.png";

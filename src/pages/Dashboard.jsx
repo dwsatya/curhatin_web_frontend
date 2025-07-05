@@ -25,6 +25,8 @@ const Dashboard = () => {
         padding: '0 80px', 
         boxSizing: 'border-box',
       }}>
+
+        {/* Bagian 1: Landing Page */}
         <div style={{ maxWidth: 580 }}> 
           <h1 className="paragraph-container" style={{ fontSize: '25px', color: '#fff', paddingBottom: '10px'}}>
             Hai! Selamat datang di
@@ -41,11 +43,12 @@ const Dashboard = () => {
           </Paragraph>
         </div>
       </div>
-      {/* Bagian 2: Forum */}
+
+      {/* Bagian 2: Forum Diskusi */}
       <div style={{ backgroundColor: '#ffffff', padding: '40px 20px' }}>
         <Row justify="center">
           <Col xs={24} md={20}>
-            <Card title="Forum Diskusi" bordered={false} style={{ borderRadius: 12 }}>
+            <Card title="Forum Diskusi" variant="outlined" style={{ borderRadius: 12 }}>
               <Paragraph>
                 Bergabunglah dengan forum diskusi kami dan temukan topik menarik yang sedang dibahas. Ayo mulai berdiskusi!
               </Paragraph>
@@ -57,11 +60,11 @@ const Dashboard = () => {
         </Row>
       </div>
 
-      {/* Bagian 3: Seminar / Webinar */}
+      {/* Bagian 3: Seminar Webinar */}
       <div style={{ backgroundColor: '#ffffff', padding: '40px 20px' }}>
         <Row justify="center">
           <Col xs={24} md={20}>
-            <Card title="Seminar & Webinar" bordered={false} style={{ borderRadius: 12 }}>
+            <Card title="Seminar & Webinar" variant="outlined" style={{ borderRadius: 12 }}>
               <Paragraph>
                 Dapatkan informasi terbaru tentang seminar dan webinar yang berkaitan dengan kesehatan mental.
               </Paragraph>
@@ -72,6 +75,7 @@ const Dashboard = () => {
           </Col>
         </Row>
       </div>
+
 
       {/* Bagian 4: Ajakan Curhat */}
       <div style={{ backgroundColor: '#fff0f5', padding: '60px 20px', textAlign: 'center' }}>

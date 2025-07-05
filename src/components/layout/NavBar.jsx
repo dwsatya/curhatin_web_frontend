@@ -1,14 +1,31 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Layout, Menu, Button } from "antd";
-import { Link, useLocation } from "react-router-dom";
-import '../../index.css';
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { AuthContext } from "../../providers/AuthProvider";
+import "../../index.css";
 
 const { Header } = Layout;
 
 const Navbar = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { isLoggedIn, logout } = useContext(AuthContext);
 
   const selectedKey = location.pathname === "/" ? "/dashboard" : location.pathname;
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
+
+  const menuItems = [
+  { label: <Link to="/dashboard">Home</Link>, key: "/dashboard" },
+  { label: <Link to="/forum">Forum</Link>, key: "/forum" },
+  { label: <Link to="/curhat">Curhat</Link>, key: "/curhat" },
+  { label: <Link to="/seminar">Seminar / Webinar</Link>, key: "/seminar" },
+  { label: <Link to="/profile">Profile</Link>, key: "/profile" },
+];
+
 
   return (
     <Header
@@ -25,40 +42,37 @@ const Navbar = () => {
       }}
     >
       <div style={{ flex: "1 0 auto", fontFamily: "Poppins, sans-serif" }}>
-        <Link  style={{ fontSize: "20px", fontWeight: "bold", color: "#ec407a" }}>
+        <Link
+          to="/"
+          style={{ fontSize: "20px", fontWeight: "bold", color: "#ec407a" }}
+        >
           Curhat.<span style={{ color: "#000" }}>in</span>
         </Link>
       </div>
 
-      <Menu
+     <Menu
         theme="light"
         mode="horizontal"
         selectedKeys={[selectedKey]}
-        style={{ flex: "0 1 auto", background: "#fff", gap: "15px", paddingRight: "100px" }}
-      >
-        <Menu.Item key="/dashboard">
-          <Link to="/dashboard">Home</Link>
-        </Menu.Item>
-        <Menu.Item key="/forum">
-          <Link to="/forum">Forum</Link>
-        </Menu.Item>
-        <Menu.Item key="/curhat">
-          <Link to="/curhat">Curhat</Link>
-        </Menu.Item>
-        <Menu.Item key="/seminar">
-          <Link to="/seminar">Seminar / Webinar</Link>
-        </Menu.Item>
-        <Menu.Item key="/profile">
-          <Link to="/profile">Profile</Link>
-        </Menu.Item>
-      </Menu>
+        items={menuItems}
+        style={{
+          flex: "0 1 auto",
+          background: "#fff",
+          gap: "15px",
+          paddingRight: "100px",
+        }}
+      />
 
-      <Link
-      className="login-link"
-      to="/login"
-      >
-      Login
-      </Link>
+      {isLoggedIn ? (
+        <Button type="primary" danger onClick={handleLogout}>
+          Logout
+        </Button>
+      ) : (
+        <Link className="login-link" to="/login">
+          Login
+        </Link>
+      )}
+
     </Header>
   );
 };

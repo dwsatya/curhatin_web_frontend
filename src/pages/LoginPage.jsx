@@ -25,7 +25,6 @@ const LoginPage = () => {
     try {
       const resp = await sendData("/api/v1/auth/login", formData);
       if (resp?.access_token) {
-        console.log("TOKEN:", resp.access_token);
         localStorage.setItem("token", resp.access_token); 
         login(resp.access_token);
         message.success("Login berhasil!");

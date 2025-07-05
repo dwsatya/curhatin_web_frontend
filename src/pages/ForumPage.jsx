@@ -17,12 +17,16 @@ const ForumPage = () => {
   const token = localStorage.getItem("token");
 
 
+  const fetchForums = () => {
+  fetch(`${apiUrl}/api/v1/thread`)
+    .then((res) => res.json())
+    .then((data) => setForums(Array.isArray(data.threads) ? data.threads : []))
+    .catch(() => message.error("Gagal memuat forum"));
+  };
+
 
   useEffect(() => {
-    fetch(`${apiUrl}/api/v1/thread`)
-      .then((res) => res.json())
-      .then((data) => setForums(Array.isArray(data.threads) ? data.threads : []))
-      .catch(() => message.error("Gagal memuat forum"));
+    fetchForums();
   }, []);
 
   const loadComments = (threadId) => {
@@ -37,20 +41,20 @@ const ForumPage = () => {
 
 
 
-const handleAddForum = (values) => {
-  setLoading(true);
+    const handleAddForum = (values) => {
+      setLoading(true);
 
-  const formData = new FormData();
-  formData.append("title", values.title);
-  formData.append("content", values.content);
+      const formData = new FormData();
+      formData.append("title", values.title);
+      formData.append("content", values.content);
 
-fetch(`${apiUrl}/api/v1/thread`, {
-  method: "POST",
-  headers: {
-    Authorization: `Bearer ${token}`,
-  },
-  body: formData,
-})
+    fetch(`${apiUrl}/api/v1/thread`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: formData,
+    })
 
     .then(async (res) => {
       if (!res.ok) {
@@ -61,8 +65,11 @@ fetch(`${apiUrl}/api/v1/thread`, {
     })
     .then((data) => {
       message.success("Forum berhasil ditambahkan!");
-      setForums((prev) => [...prev, data]);
+      fetchForums();
+      form.resetFields();
+      setShowForm(false);
     })
+
     .catch((err) => {
       console.error("Error:", err);
       message.error(`Gagal (${err.message})`);
@@ -71,7 +78,6 @@ fetch(`${apiUrl}/api/v1/thread`, {
       setLoading(false);
     });
 };
-
 
   // Handle add comment
   const handleAddComment = (values) => {
@@ -138,26 +144,27 @@ fetch(`${apiUrl}/api/v1/thread`, {
         gap: 24,
     }}
     >
-    {forums.map((item) => (
-        <Card
-        key={item.id}
+    {forums.map((item, index) => (
+      <Card
+        key={item.id || `${item.title}-${index}`} 
         title={<Text strong>{item.title}</Text>}
         onClick={() => loadComments(item.id)}
-        style={{
-            cursor: "pointer",
-            borderRadius: 12,
-            boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
-            transition: "transform 0.2s",
-        }}
         hoverable
-        >
+        style={{
+          cursor: "pointer",
+          borderRadius: 12,
+          boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
+          transition: "transform 0.2s",
+        }}
+      >
         <Paragraph ellipsis={{ rows: 3 }}>{item.content}</Paragraph>
         <div style={{ display: "flex", justifyContent: "space-between", marginTop: 12 }}>
-            <Text type="secondary">👤 {item.username || "Anonim"}</Text>
-            <Text type="secondary">{item.created_at}</Text>
+          <Text type="secondary">👤 {item.username || "Anonim"}</Text>
+          <Text type="secondary">{item.created_at}</Text>
         </div>
-        </Card>
+      </Card>
     ))}
+
     </div>
 
 
