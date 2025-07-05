@@ -1,14 +1,26 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Card, Col, Row, Typography, Button } from 'antd';
+import { useNavigate } from 'react-router-dom';
 
 import '../components/WelcomeSection.css';
 import landingImage from '../assets/images/landingpage2.png';
 
-
-
 const { Title, Paragraph } = Typography;
 
+
 const Dashboard = () => {
+
+  const [forums, setForums] = useState([]);
+  const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
+  const navigate = useNavigate();
+
+  useEffect(() => {
+  fetch(`${apiUrl}/api/v1/thread`)
+    .then((res) => res.json())
+    .then((data) => setForums(Array.isArray(data.threads) ? data.threads : []))
+    .catch(() => console.error("Gagal memuat forum"));
+}, []);
+
   return (
     <div>
       <div style={{
@@ -48,13 +60,36 @@ const Dashboard = () => {
       <div style={{ backgroundColor: '#ffffff', padding: '40px 20px' }}>
         <Row justify="center">
           <Col xs={24} md={20}>
-            <Card title="Forum Diskusi" variant="outlined" style={{ borderRadius: 12 }}>
-              <Paragraph>
-                Bergabunglah dengan forum diskusi kami dan temukan topik menarik yang sedang dibahas. Ayo mulai berdiskusi!
-              </Paragraph>
-              <Button type="primary" style={{ backgroundColor: '#ec407a', borderColor: '#ec407a' }}>
-                Masuk ke Forum
-              </Button>
+            <Card
+              title="Forum Diskusi"
+              extra={
+                <Button
+                  type="primary"
+                  onClick={() => navigate('/forum')}
+                  style={{ backgroundColor: '#ec407a', borderColor: '#ec407a' }}
+                >
+                  Buat Forum Kalian
+                </Button>
+              }
+              style={{ borderRadius: 12 }}
+            >
+              {forums.length === 0 ? (
+                <Paragraph>Tidak ada forum saat ini.</Paragraph>
+              ) : (
+                forums.slice(0, 3).map((forum) => (
+                  <Card
+                    key={forum.id}
+                    type="inner"
+                    title={forum.title}
+                    style={{ marginBottom: 16 }}
+                  >
+                    <Paragraph ellipsis={{ rows: 2 }}>{forum.content}</Paragraph>
+                    <Paragraph type="secondary" style={{ marginTop: 8 }}>
+                      Dibuat oleh: {forum.username || "Anonim"}
+                    </Paragraph>
+                  </Card>
+                ))
+              )}
             </Card>
           </Col>
         </Row>
