@@ -12,6 +12,8 @@ const ForumPage = () => {
   const [commentForm] = Form.useForm();
   const [form] = Form.useForm();
 
+  const [editForum, setEditForum] = useState(null);
+
   const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
   const token = localStorage.getItem("token");
   const userId = localStorage.getItem("user_id");
@@ -69,12 +71,31 @@ const ForumPage = () => {
         form.resetFields();
       })
       .catch((err) => {
-        console.error("Error:", err);
         message.error(`Gagal (${err.message})`);
       })
-      .finally(() => {
-        setLoading(false);
-      });
+      .finally(() => setLoading(false));
+  };
+
+  const handleUpdateForum = (values) => {
+    if (!editForum?.id) return;
+
+    const formData = new FormData();
+    formData.append("title", values.title);
+    formData.append("content", values.content);
+
+    fetch(`${apiUrl}/api/v1/thread/${editForum.id}`, {
+      method: "PUT",
+      headers: { Authorization: `Bearer ${token}` },
+      body: formData,
+    })
+      .then((res) => res.json())
+      .then(() => {
+        message.success("Forum diperbarui!");
+        fetchForums();
+        form.resetFields();
+        setEditForum(null);
+      })
+      .catch(() => message.error("Gagal memperbarui forum"));
   };
 
   const handleAddComment = (values) => {
@@ -95,11 +116,43 @@ const ForumPage = () => {
         setComments((prev) => [...prev, { id: Date.now(), content: values.comment, username: "Anda" }]);
         commentForm.resetFields();
       })
-      .catch((err) => {
-        console.error(err);
-        message.error(err.message || "Gagal menambahkan komentar");
-      });
+      .catch((err) => message.error(err.message || "Gagal menambahkan komentar"));
   };
+
+  const handleEdit = (forum, e) => {
+    e.stopPropagation();
+    setEditForum(forum);
+    form.setFieldsValue({ title: forum.title, content: forum.content });
+  };
+
+const handleDelete = (id, e) => {
+  e.stopPropagation();
+  if (!window.confirm("Yakin ingin menghapus forum ini?")) return;
+
+  fetch(`${apiUrl}/api/v1/thread/${id}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
+    .then(async (res) => {
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Gagal menghapus");
+      return data;
+    })
+    .then(() => {
+      message.success("Forum dihapus");
+      fetchForums(); 
+      if (selectedForum?.id === id) {
+        setSelectedForum(null);
+        setComments([]);
+      }
+    })
+    .catch((err) => {
+      message.error(err.message || "Gagal menghapus forum");
+    });
+};
+
 
   const renderForumList = (forumList) =>
     forumList.map((item, index) => (
@@ -112,7 +165,6 @@ const ForumPage = () => {
             cursor: "pointer",
             borderRadius: 12,
             boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
-            transition: "transform 0.2s",
           }}
         >
           <Paragraph ellipsis={{ rows: 2 }}>{item.content}</Paragraph>
@@ -122,7 +174,17 @@ const ForumPage = () => {
           </div>
         </Card>
 
-        {/* Komentar */}
+        {item.user_id == userId && (
+          <div style={{ marginTop: 12, textAlign: 'right' }}>
+            <Button size="small" style={{ marginRight: 8 }} onClick={(e) => handleEdit(item, e)}>
+              Edit
+            </Button>
+            <Button size="small" danger onClick={(e) => handleDelete(item.id, e)}>
+              Hapus
+            </Button>
+          </div>
+        )}
+
         {selectedForum?.id === item.id && (
           <Card title="Komentar" style={{ marginTop: 12 }}>
             <List
@@ -134,12 +196,7 @@ const ForumPage = () => {
                 </List.Item>
               )}
             />
-            <Form
-              form={commentForm}
-              layout="vertical"
-              onFinish={handleAddComment}
-              style={{ marginTop: 16 }}
-            >
+            <Form form={commentForm} layout="vertical" onFinish={handleAddComment} style={{ marginTop: 16 }}>
               <Form.Item
                 label="Komentar"
                 name="comment"
@@ -148,9 +205,7 @@ const ForumPage = () => {
                 <TextArea rows={3} />
               </Form.Item>
               <Form.Item>
-                <Button type="primary" htmlType="submit">
-                  Kirim Komentar
-                </Button>
+                <Button type="primary" htmlType="submit">Kirim Komentar</Button>
               </Form.Item>
             </Form>
           </Card>
@@ -163,16 +218,20 @@ const ForumPage = () => {
 
   return (
     <div style={{ display: "flex", height: "100vh", overflow: "hidden" }}>
-      {/* Form Buat Forum */}
+      {/* Form Buat/Edit Forum */}
       <div style={{ width: "30%", padding: 24, borderRight: "1px solid #f0f0f0", overflow: "auto" }}>
         <div style={{ marginBottom: 24 }}>
-        <Title level={3} style={{ marginBottom: 8, fontFamily: 'Poppins', color: '#ec407a' }}>
-          Tambah Forum Diskusi
-        </Title>
-        <div style={{ height: 3, width: 120, backgroundColor: '#ec407a', borderRadius: 6 }} />
+          <Title level={3} style={{ marginBottom: 8, fontFamily: 'Poppins', color: '#ec407a' }}>
+            {editForum ? "Edit Forum" : "Tambah Forum Diskusi"}
+          </Title>
+          <div style={{ height: 3, width: 120, backgroundColor: '#ec407a', borderRadius: 6 }} />
         </div>
         <Card>
-          <Form layout="vertical" onFinish={handleAddForum} form={form}>
+          <Form
+            layout="vertical"
+            onFinish={editForum ? handleUpdateForum : handleAddForum}
+            form={form}
+          >
             <Form.Item
               label="Judul Forum"
               name="title"
@@ -189,30 +248,29 @@ const ForumPage = () => {
             </Form.Item>
             <Form.Item>
               <Button type="primary" htmlType="submit" loading={loading}>
-                Tambah Forum
+                {editForum ? "Update Forum" : "Tambah Forum"}
               </Button>
+              {editForum && (
+                <Button style={{ marginLeft: 8 }} onClick={() => {
+                  setEditForum(null);
+                  form.resetFields();
+                }}>
+                  Batal
+                </Button>
+              )}
             </Form.Item>
           </Form>
         </Card>
       </div>
 
       {/* List Forum */}
-      <div
-        style={{
-          width: "70%",
-          padding: 24,
-          overflowY: "auto",
-          height: "100vh",
-          background: "#fafafa",
-        }}
-      >
+      <div style={{ width: "70%", padding: 24, overflowY: "auto", background: "#fafafa" }}>
         <div style={{ marginBottom: 24 }}>
-        <Title level={3} style={{ marginBottom: 8, fontFamily: 'Poppins', color: '#ec407a' }}>
-          Forum Diskusi
-        </Title>
-        <div style={{ height: 3, width: 120, backgroundColor: '#ec407a', borderRadius: 6 }} />
-      </div>
-
+          <Title level={3} style={{ marginBottom: 8, fontFamily: 'Poppins', color: '#ec407a' }}>
+            Forum Diskusi
+          </Title>
+          <div style={{ height: 3, width: 120, backgroundColor: '#ec407a', borderRadius: 6 }} />
+        </div>
 
         {loading ? (
           Array.from({ length: 3 }).map((_, idx) => (
@@ -225,18 +283,11 @@ const ForumPage = () => {
             {forumSaya.length > 0 && (
               <>
                 <div style={{ display: 'flex', alignItems: 'center', marginBottom: 16 }}>
-                  <div style={{
-                    width: 5,
-                    height: 24,
-                    backgroundColor: '#ec407a',
-                    borderRadius: 4,
-                    marginRight: 10
-                  }} />
+                  <div style={{ width: 5, height: 24, backgroundColor: '#ec407a', borderRadius: 4, marginRight: 10 }} />
                   <Title level={4} style={{ margin: 0, fontFamily: 'Poppins', color: '#333' }}>
                     Forum yang Kamu Buat
                   </Title>
                 </div>
-
                 {renderForumList(forumSaya)}
               </>
             )}
@@ -244,18 +295,11 @@ const ForumPage = () => {
             {forumLain.length > 0 && (
               <>
                 <div style={{ display: 'flex', alignItems: 'center', marginBottom: 16 }}>
-                  <div style={{
-                    width: 5,
-                    height: 24,
-                    backgroundColor: '#ec407a',
-                    borderRadius: 4,
-                    marginRight: 10
-                  }} />
+                  <div style={{ width: 5, height: 24, backgroundColor: '#ec407a', borderRadius: 4, marginRight: 10 }} />
                   <Title level={4} style={{ margin: 0, fontFamily: 'Poppins', color: '#333' }}>
                     Forum Lainnya
                   </Title>
                 </div>
-
                 {renderForumList(forumLain)}
               </>
             )}
