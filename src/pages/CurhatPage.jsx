@@ -12,13 +12,12 @@ import {
 } from 'antd';
 import { UserOutlined, WhatsAppOutlined } from '@ant-design/icons';
 
-const { Title, Paragraph } = Typography;
+const { Title, Paragraph, Text } = Typography;
 
 const CurhatPage = () => {
   const [listeners, setListeners] = useState([]);
   const [loading, setLoading] = useState(true);
   const [popupListener, setPopupListener] = useState(null);
-
 
   useEffect(() => {
     fetchListeners();
@@ -40,116 +39,90 @@ const CurhatPage = () => {
 
   const handleCurhat = (listener) => {
     if (!listener.number) {
-      alert('Nomor WhatsApp tidak tersedia.');
+      message.warning('Nomor WhatsApp tidak tersedia.');
       return;
     }
     setPopupListener(listener);
   };
+
   const confirmCurhat = () => {
-  const phoneNumber = popupListener.number.replace(/\D/g, '');
-  const messageText = encodeURIComponent(
-    'Halo saya ingin curhat, saya mendapat nomor telepon anda dari website Curhat.in.com'
-  );
-  const waUrl = `https://wa.me/${phoneNumber}?text=${messageText}`;
-  window.open(waUrl, '_blank');
-  setPopupListener(null); // Tutup popup
-};
+    const phoneNumber = popupListener.number.replace(/\D/g, '');
+    const messageText = encodeURIComponent(
+      'Halo saya ingin curhat, saya mendapat nomor telepon anda dari website Curhat.in.com'
+    );
+    const waUrl = `https://wa.me/${phoneNumber}?text=${messageText}`;
+    window.open(waUrl, '_blank');
+    setPopupListener(null);
+  };
 
-const cancelCurhat = () => {
-  setPopupListener(null);
-};
-
+  const cancelCurhat = () => {
+    setPopupListener(null);
+  };
 
   return (
-    <div
-      style={{
-        minHeight: '100vh',
-        width: '100%',
-        backgroundColor: '#fafafa',
-        padding: '24px 80px',
-        boxSizing: 'border-box',
-      }}
-    >
+    <div style={{ padding: '40px 80px', backgroundColor: '#fff', minHeight: '100vh' }}>
       <div style={{ marginBottom: 24 }}>
         <Title level={3} style={{ marginBottom: 8, fontFamily: 'Poppins', color: '#ec407a' }}>
             Curahkan Hatimu dengan pendengar kami!
         </Title>
       <div style={{ height: 3, width: 120, backgroundColor: '#ec407a', borderRadius: 6 }} />
     </div>
-      <Card
-        bordered={false}
-        style={{
-          borderRadius: 12,
-          boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-          backgroundColor: '#fff'
-        }}
-      >
-        {loading ? (
-          Array.from({ length: 3 }).map((_, index) => (
-            <Card
-              key={index}
-              style={{
-                marginBottom: 24,
-                borderRadius: 12,
-                boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
-              }}
-            >
-              <Skeleton active avatar paragraph={{ rows: 3 }} />
-            </Card>
-          ))
-        ) : (
-
-          <Row gutter={[24, 24]}>
-            {listeners.map((item) => (
-              <Col xs={24} sm={12} md={8} key={item.id}>
-                <Card
-                  hoverable
+      {loading ? (
+        <Row gutter={[24, 24]}>
+          {Array.from({ length: 6 }).map((_, index) => (
+            <Col xs={24} sm={12} md={8} key={index}>
+              <Card style={{ borderRadius: 12 }}><Skeleton active avatar paragraph={{ rows: 3 }} /></Card>
+            </Col>
+          ))}
+        </Row>
+      ) : (
+        <Row gutter={[24, 24]}>
+          {listeners.map((item) => (
+            <Col xs={24} sm={12} md={8} key={item.id}>
+              <Card
+                hoverable
+                style={{
+                  borderRadius: 16,
+                  boxShadow: '0 6px 16px rgba(0,0,0,0.08)',
+                  transition: 'all 0.3s',
+                  height: '100%',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', marginBottom: 16 }}>
+                  <Avatar size={56} icon={<UserOutlined />} style={{ backgroundColor: '#ec407a', marginRight: 16 }} />
+                  <div>
+                    <Title level={5} style={{ margin: 0 }}>{item.name}</Title>
+                    <Tag color={item.available ? 'green' : 'red'}>
+                      {item.available ? 'Tersedia' : 'Tidak Tersedia'}
+                    </Tag>
+                  </div>
+                </div>
+                <Paragraph><Text strong>Bio:</Text> {item.bio}</Paragraph>
+                <Button
+                  type="primary"
+                  icon={<WhatsAppOutlined />}
+                  onClick={() => handleCurhat(item)}
+                  disabled={!item.available}
                   style={{
-                    borderRadius: 10,
-                    height: '100%',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'space-between'
+                    marginTop: 16,
+                    backgroundColor: item.available ? '#ec407a' : '#ccc',
+                    borderColor: item.available ? '#ec407a' : '#ccc',
+                    color: '#fff',
+                    transition: 'all 0.2s',
                   }}
                 >
-                  <div style={{ display: 'flex', alignItems: 'center', marginBottom: 12 }}>
-                    <Avatar
-                      size={48}
-                      icon={<UserOutlined />}
-                      style={{ backgroundColor: '#ec407a', marginRight: 12 }}
-                    />
-                    <div>
-                      <Title level={5} style={{ margin: 0 }}>{item.name}</Title>
-                      <Tag color={item.available ? 'green' : 'red'}>
-                        {item.available ? 'Tersedia' : 'Tidak Tersedia'}
-                      </Tag>
-                    </div>
-                  </div>
+                  Curhat Sekarang
+                </Button>
+              </Card>
+            </Col>
+          ))}
+        </Row>
+      )}
 
-                  <Paragraph><strong>Bio:</strong> {item.bio}</Paragraph>
-
-                  <div style={{ marginTop: 'auto' }}>
-                    <Button
-                      type="primary"
-                      icon={<WhatsAppOutlined />}
-                      onClick={() => handleCurhat(item)}
-                      disabled={!item.available}
-                      style={{
-                        width: '100%',
-                        backgroundColor: item.available ? '#ec407a' : '#ccc',
-                        borderColor: item.available ? '#ec407a' : '#ccc',
-                        color: '#fff'
-                      }}
-                    >
-                      Curhat Sekarang
-                    </Button>
-                  </div>
-                </Card>
-              </Col>
-            ))}
-          </Row>
-        )}
-      </Card>
+      {/* POPUP */}
       {popupListener && (
         <div style={{
           position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
@@ -158,12 +131,14 @@ const cancelCurhat = () => {
           zIndex: 9999
         }}>
           <div style={{
-            background: '#fff', borderRadius: 12,
-            padding: 24, width: '90%', maxWidth: 400,
+            background: '#fff', borderRadius: 16,
+            padding: 32, width: '90%', maxWidth: 400,
             boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
             textAlign: 'center'
           }}>
-            <Title level={4} style={{ marginBottom: 12, color: '#ec407a' }}>Buka WhatsApp?</Title>
+            <Title level={4} style={{ marginBottom: 16, color: '#ec407a' }}>
+              Buka WhatsApp?
+            </Title>
             <Paragraph>
               Kamu akan diarahkan ke WhatsApp untuk mulai curhat dengan <strong>{popupListener.name}</strong>.
             </Paragraph>
@@ -176,7 +151,6 @@ const cancelCurhat = () => {
           </div>
         </div>
       )}
-
     </div>
   );
 };

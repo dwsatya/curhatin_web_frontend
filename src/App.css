@@ -39,3 +39,43 @@
   color: #888;
 }
 
+.ant-card {
+  transition: transform 0.2s ease;
+}
+.ant-card:hover {
+  transform: translateY(-4px);
+}
+
+
+.feature-card {
+  border-radius: 16px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  padding: 24px;
+}
+
+.feature-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
+}
+
+.icon-wrapper {
+  background-color: #ffe4ec;
+  padding: 12px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.feature-icon {
+  font-size: 24px;
+  color: #ec407a;
+}
+
+.feature-text {
+  font-size: 16px;
+  color: #333;
+  line-height: 1.8;
+  margin: 0;
+}
