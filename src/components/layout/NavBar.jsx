@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Layout, Menu, Button } from "antd";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../providers/AuthProvider";
@@ -10,8 +10,20 @@ const Navbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { isLoggedIn, logout } = useContext(AuthContext);
+  const [isAdmin, setIsAdmin] = useState(false);
 
-  const selectedKey = location.pathname === "/" ? "/dashboard" : location.pathname;
+  useEffect(() => {
+    const userData = localStorage.getItem("user");
+    if (userData) {
+      const user = JSON.parse(userData);
+      if (user?.role === "admin") {
+        setIsAdmin(true);
+      }
+    }
+  }, []);
+
+  const selectedKey =
+    location.pathname === "/" ? "/dashboard" : location.pathname;
 
   const handleLogout = () => {
     logout();
@@ -19,13 +31,19 @@ const Navbar = () => {
   };
 
   const menuItems = [
-  { label: <Link to="/dashboard">Home</Link>, key: "/dashboard" },
-  { label: <Link to="/forum">Forum</Link>, key: "/forum" },
-  { label: <Link to="/curhat">Curhat</Link>, key: "/curhat" },
-  { label: <Link to="/seminar">Seminar / Webinar</Link>, key: "/seminar" },
-  { label: <Link to="/profile">Profile</Link>, key: "/profile" },
-];
+    { label: <Link to="/dashboard">Home</Link>, key: "/dashboard" },
+    { label: <Link to="/forum">Forum</Link>, key: "/forum" },
+    { label: <Link to="/curhat">Curhat</Link>, key: "/curhat" },
+    { label: <Link to="/seminar">Seminar / Webinar</Link>, key: "/seminar" },
+    { label: <Link to="/profile">Profile</Link>, key: "/profile" },
+  ];
 
+  if (isAdmin) {
+    menuItems.push({
+      label: <Link to="/admin">Admin</Link>,
+      key: "/admin",
+    });
+  }
 
   return (
     <Header
@@ -50,7 +68,7 @@ const Navbar = () => {
         </Link>
       </div>
 
-     <Menu
+      <Menu
         theme="light"
         mode="horizontal"
         selectedKeys={[selectedKey]}
@@ -72,7 +90,6 @@ const Navbar = () => {
           Login
         </Link>
       )}
-
     </Header>
   );
 };

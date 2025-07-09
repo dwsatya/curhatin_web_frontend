@@ -6,7 +6,6 @@ import { sendData } from "../utils/api";
 import { AuthContext } from "../providers/AuthProvider";
 import { jwtDecode } from "jwt-decode";
 
-
 const { Title, Text } = Typography;
 
 const LoginPage = () => {
@@ -26,21 +25,21 @@ const LoginPage = () => {
 
     try {
       const resp = await sendData("/api/v1/auth/login", formData);
+
       if (resp?.access_token) {
-        localStorage.setItem("token", resp.access_token); 
-        if (resp?.access_token) {
-          localStorage.setItem("token", resp.access_token);
+        const decoded = jwtDecode(resp.access_token);
 
-          // ⬇️ Tambahan: simpan user_id dari token
-          const decoded = jwtDecode(resp.access_token);
-          const userId = decoded.user_id || decoded.sub; // tergantung backend kamu
-          localStorage.setItem("user_id", userId);
+        // Ambil data dari token
+        const userData = {
+          user_id: decoded.user_id || decoded.sub,
+          username: decoded.username || '',
+          role: decoded.role || 'user', 
+        };
 
-          login(resp.access_token);
-          message.success("Login berhasil!");
-          navigate("/dashboard");
-        }
-
+        // Simpan ke localStorage
+        localStorage.setItem("token", resp.access_token);
+        localStorage.setItem("user", JSON.stringify(userData));
+        localStorage.setItem("user_id", userData.user_id);
 
         login(resp.access_token);
         message.success("Login berhasil!");
